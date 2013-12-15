@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{include _head}}
+    <meta property="og:title" content="Help a Friend. Get free tickets to - '{{=title}}'"/>
+    <meta property="og:description" content="Do you know anyone based in {{=location}} who's good at - {{=skills}}? <br/> {{=description}}"/>
+    <meta property="og:url" content="{{=fullURL}}">
+    <meta property="og:image" content="http://refrew.kd.io/images/ipad.png"/>
+    <script src="/javascripts/referral.js"></script>
+<script type="text/javascript">
+var Mod = {};
+function onLinkedInLoad() {
+     IN.Event.on(IN, "auth", onLinkedInAuth);
+     console.log('LinkedIn Load');
+}
+
+function onLinkedInAuth() {
+    var keywords = '{{=skills}}'; 
+    console.log('LinkedIn Auth');
+    $('#linkedin-logout').show();
+    $('#linkedin-search').show();
+    $('#linkedin-signin').hide();
+    new Mod.Controller().peopleSearch(keywords);
+}    
+
+function linkedinLogout(){
+    IN.User.logout();
+    $('#linkedin-logout').hide();
+    $('#linkedin-signin').show();
+    $('#linkedin-search').hide();
+}
+
+
+</script>
+</head>
+<body>
+<section class="hbox stretch"> <!-- .aside -->
+    <aside class="bg-dark aside-sm" id="nav">
+    {{include _nav}}
+    </aside>
+    <!-- /.aside --> <!-- .vbox -->
+    <section id="content">
+        <section class="vbox">
+            <header class="header bg-light dker bg-gradient"><p>Refer. Recruit. Reward.</p></header>
+            <section class="scrollable wrapper">
+                <div class="row">
+                    <div class="col-lg-6"> <!-- .accordion -->
+                        <div class="panel-group m-b" id="accordion2">
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseOne">
+                                    Job Details</a>
+                                </div>
+                                <div id="collapseOne" class="panel-collapse in">
+                                    <div class="panel-body text-sm">
+                                        <p>Location : {{=location}}</p>
+                                        <p>Skills : {{=skills}}</p>
+                                        <p>Description : {{=description}}</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="panel">
+                                <div class="panel-heading">
+                                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+                                    Reward Details</a>
+                                </div>
+                                <div id="collapseTwo" class="panel-collapse collapse">
+                                    <div class="panel-body text-sm">
+                                    <p>Event : <a tagret="_blank" href="{{=eventUrl}}">{{=eventName}}</a></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> <!--col-lg-16-->
+                    <div class="col-lg-6">
+                        <div>
+                            <a id='linkedin-logout' style="display:none;position:absolute;right:50px;" href='javascript:linkedinLogout();'>Logout</a>
+                        </div>
+                        <div>
+                            <script type="IN/Share" data-url="{{=fullURL}}"></script>
+                        </div>
+                    </div> <!--col-lg-16-->
+                </div><!-- row -->
+                <div id="linkedin-sigin" class="row">
+                    <div class="col-lg-6">
+                    <section class="panel">
+                        <div class="panel-body">
+                            <script type="IN/Login"></script>
+                        </div>
+                    </section>
+                    </div>
+                </div>
+                <div id="linkedin-search" style="display:none;" class="row">
+                    <div class="col-lg-6">
+                        <section class="panel">
+                            <header class="panel-heading">
+                                <div class="input-group text-sm">
+                                    <input type="text" class="input-sm form-control" placeceholder="Search">
+                                    <div class="input-group-btn">
+                                        <button type="button" class="btn btn-sm btn-white">Search</button>
+                                    </div>
+                                </div>
+                            </header>
+                            <div id="li-search-results" style="height:600px" class="panel-body scrollbar scroll-y m-b"></div>
+                            <script type="text/template" id="lisearch-item-template">
+                                        <div class="media">
+                                        <span class="pull-left thumb-sm">
+                                            <img src="<%=pictureUrl%>" alt="<%=firstName%>" class="img-circle">
+                                        </span>
+                                        <div class="pull-right text-success m-t-sm"><i class="icon-circle"></i></div>
+                                        <div class="media-body">
+                                            <div><a name='name' href="<%=publicProfileUrl%>"><%=firstName%> <%=lastName%></a></div>
+                                            <small class="text-muted"><%= headline%></small>
+                                            <small class="text-muted">(<%=location.name%>)</small>
+                                        </div>
+                                    </div>
+                            </script>
+                        </section>
+                    </div>                
+                </div><!-- row -->
+            </section>
+        </section>
+    </section>
+    <!-- /.vbox --> </section>
+<script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
+</body>
+</html>
