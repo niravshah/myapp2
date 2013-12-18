@@ -11,16 +11,42 @@
 var Mod = {};
 function onLinkedInLoad() {
      IN.Event.on(IN, "auth", onLinkedInAuth);
-     console.log('LinkedIn Load');
 }
 
 function onLinkedInAuth() {
-    var keywords = '{{=skills}}'; 
-    console.log('LinkedIn Auth');
     $('#linkedin-logout').show();
-    $('#linkedin-search').show();
     $('#linkedin-signin').hide();
-    new Mod.Controller().peopleSearch(keywords);
+    
+    var keywords = '{{=skills}}'; 
+    var jobid = $('#job-id').val();
+    
+    IN.API.Profile("me")
+                .fields(["firstName", "lastName", "id", "publicProfileUrl"])
+                .result(function (results) {
+                    $('#referer-first-name').val(results.values[0].firstName);
+                    $('#referer-last-name').val(results.values[0].lastName);
+                    $('#referer-url').val(results.values[0].publicProfileUrl);
+                    $('#referer-id').val(results.values[0].id);
+                    var controller = new Mod.Controller();
+                    var Referral = Parse.Object.extend("referral");
+                    var query = new Parse.Query(Referral);
+                    query.equalTo("refererId", results.values[0].id);
+                    query.equalTo("jobid", jobid);
+                    query.find({
+                        success:function(results){
+                            if(results.length > 0){
+                                $('#user-referrals').show();
+                                controller.displayUserSelectedReferral(results);
+                            }
+                            if(0 < results.length < 2){
+                                $('#linkedin-search').show();
+                                $('#search-keywords').val(keywords);                            
+                                controller.peopleSearch(keywords);
+                            }
+                        }
+                    });
+
+                });
 }    
 
 function linkedinLogout(){
@@ -28,8 +54,8 @@ function linkedinLogout(){
     $('#linkedin-logout').hide();
     $('#linkedin-signin').show();
     $('#linkedin-search').hide();
+    $('#user-referrals').hide();
 }
-
 
 </script>
 </head>
@@ -53,9 +79,11 @@ function linkedinLogout(){
                                 </div>
                                 <div id="collapseOne" class="panel-collapse in">
                                     <div class="panel-body text-sm">
+                                        <input id="job-id" type="hidden" value="{{=jobid}}"/>
                                         <p>Location : {{=location}}</p>
                                         <p>Skills : {{=skills}}</p>
                                         <p>Description : {{=description}}</p>
+                                        <input type="hidden" id="jobid" value="{{=jobid}}"/>
                                     </div>
                                 </div>
                             </div>
@@ -64,7 +92,7 @@ function linkedinLogout(){
                                     <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
                                     Reward Details</a>
                                 </div>
-                                <div id="collapseTwo" class="panel-collapse collapse">
+                                <div id="collapseTwo" class="panel-collapse in">
                                     <div class="panel-body text-sm">
                                     <p>Event : <a tagret="_blank" href="{{=eventUrl}}">{{=eventName}}</a></p>
                                     </div>
@@ -73,20 +101,32 @@ function linkedinLogout(){
                         </div>
                     </div> <!--col-lg-16-->
                     <div class="col-lg-6">
-                        <div>
-                            <a id='linkedin-logout' style="display:none;position:absolute;right:50px;" href='javascript:linkedinLogout();'>Logout</a>
-                        </div>
-                        <div>
-                            <script type="IN/Share" data-url="{{=fullURL}}"></script>
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <section class="panel">
+                                <div class="panel-body">                    
+                                    <div><script type="IN/Share" data-url="{{=fullURL}}"></script></div>
+                                </div>
+                                </section>
+                            </div>
+                            <div class="col-lg-6">
+                                <section class="panel">
+                                <div class="panel-body">
+                                    <div id="linkedin-logout"><a href='javascript:linkedinLogout();' class="btn btn-white"><i class="icon-linkedin-sign"></i>Logout</a></div>
+                                    <div id="linkedin-signin"><script type="IN/Login"></script></div>
+                                </div>
+                                </section>
+                            </div>
                         </div>
                     </div> <!--col-lg-16-->
                 </div><!-- row -->
-                <div id="linkedin-sigin" class="row">
+                <div id="user-referrals" style="display:none;" class="row">
                     <div class="col-lg-6">
                     <section class="panel">
-                        <div class="panel-body">
-                            <script type="IN/Login"></script>
-                        </div>
+                        <header class="panel-heading">
+                            <p>Your Referrals</p>
+                        </header>
+                        <div id="li-user-referrals" style="height:150px" class="panel-body scrollbar scroll-y m-b"></div>
                     </section>
                     </div>
                 </div>
@@ -95,33 +135,84 @@ function linkedinLogout(){
                         <section class="panel">
                             <header class="panel-heading">
                                 <div class="input-group text-sm">
-                                    <input type="text" class="input-sm form-control" placeceholder="Search">
+                                    <input id="search-keywords" type="text" class="input-sm form-control" placeceholder="Search"></input>
                                     <div class="input-group-btn">
-                                        <button type="button" class="btn btn-sm btn-white">Search</button>
+                                        <button id="search-linkedin" type="button" class="btn btn-sm btn-white">Search</button>
                                     </div>
                                 </div>
                             </header>
                             <div id="li-search-results" style="height:600px" class="panel-body scrollbar scroll-y m-b"></div>
-                            <script type="text/template" id="lisearch-item-template">
-                                        <div class="media">
-                                        <span class="pull-left thumb-sm">
-                                            <img src="<%=pictureUrl%>" alt="<%=firstName%>" class="img-circle">
-                                        </span>
-                                        <div class="pull-right text-success m-t-sm"><i class="icon-circle"></i></div>
-                                        <div class="media-body">
-                                            <div><a name='name' href="<%=publicProfileUrl%>"><%=firstName%> <%=lastName%></a></div>
-                                            <small class="text-muted"><%= headline%></small>
-                                            <small class="text-muted">(<%=location.name%>)</small>
-                                        </div>
-                                    </div>
-                            </script>
                         </section>
-                    </div>                
+                    </div>
+                    <div id="li-selected-ref" class="col-lg-6"></div>
+                    <input type="hidden" id="referer-first-name" value=""/>
+                    <input type="hidden" id="referer-last-name" value=""/>
+                    <input type="hidden" id="referer-url" value=""/>
+                    <input type="hidden" id="referer-id" value=""/>                      
                 </div><!-- row -->
             </section>
         </section>
     </section>
-    <!-- /.vbox --> </section>
+    </section>
+
+<script type="text/template" id="lisearch-item-template">
+    <div class="media">
+        <span class="pull-left thumb-sm">
+            <%if (typeof pictureUrl != 'undefined'){%>
+                <img id="refree-img" src="<%=pictureUrl%>" alt="<%=firstName%>" class="img-circle">
+            <%}else{%>
+                <img id="refree-img" src="" alt="<%=firstName%>" class="img-circle">
+            <%}%>
+        </span>
+        
+        <div class="pull-right text-muted m-t-sm">
+        <%if (typeof id != 'undefined'){%>
+            <button data-objid="<%=id%>" class="destroy close">x</button>
+        <%}else{%>
+            <i class="icon-circle"></i>
+        <%}%>
+        </div>
+        <div class="media-body">
+            <input type="hidden" id="refree-first-name" value="<%=firstName%>"/>
+            <input type="hidden" id="refree-last-name" value="<%=lastName%>"/>
+            <div><a name='name' href="<%=publicProfileUrl%>"><%=firstName%> <%=lastName%></a></div>
+            <small id="refree-headline" class="text-muted"><%= headline%></small>
+            <small id="refree-location" class="text-muted"><%=location.name%></small>
+        </div>
+    </div>
+</script>
+<script type="text/template" id="submit-referral-form">
+    <div  class="panel">
+    <div class="panel-heading"><p>Submit Referral for : <a href="<%=url%>" id="refree-name"><%=name%></a></p></div>
+    <div style="height:600px" class="panel-body scrollbar scroll-y m-b">
+    <input type="hidden" id="selected-refree-headline" value="<%=headline%>">
+    <input type="hidden" id="selected-refree-location" value="<%=location%>">
+    <input type="hidden" id="selected-refree-first-name" value="<%=firstName%>">
+    <input type="hidden" id="selected-refree-last-name" value="<%=lastName%>">
+    <input type="hidden" id="selected-refree-img" value="<%=imgSrc%>">
+    <div class="form-group">
+        <label class="col-sm-6 control-label">How do you know <%=name%> ? </label>
+        <div class="col-sm-6">
+            <select id="refree-rel" class="form-control">
+                <option value="0">Friend</option>
+                <option value="1">Colleague</option>
+                <option value="2">Acquaintance</option>
+                <option value="3">Other</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-6"> Tell us more about <%=name%> </label>
+        <div class="col-sm-6">
+        <textarea id="refree-about" rows="8" data-trigger="keyup" data-rangelength="[20,200]" class="form-control parsley-validated"/>
+        </div>
+    </div>
+    <br/>
+    <button id='save-referral' type="submit" class="btn btn-primary">Submit Referral</button>
+    </div>
+    </div>
+</script>
 <script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
+<script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
 </body>
 </html>

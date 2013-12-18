@@ -20,10 +20,8 @@ exports.job = function(req, response){
     .query({where:'{"jobId":'+jobid+'}'})
     .end(function(e,res){
         var fullURL = req.protocol + "://refrew.kd.io" + req.url;
-        console.log(fullURL);
         json = JSON.parse(res.text);
         var result = json['results'][0];
-        console.log(result);
         var args = {};
         args['location'] = result.location;
         args['skills'] = result.skills;
@@ -32,7 +30,7 @@ exports.job = function(req, response){
         args['eventName'] = result.eventName;
         args['eventUrl'] = result.eventUrl;
         args['fullURL'] = fullURL;
-        console.log(args);
+        args['jobid'] = jobid;
         response.render('job',args);
     })
 };
