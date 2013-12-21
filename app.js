@@ -38,7 +38,7 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/', routes.index);
+app.get('/index', routes.index);
 app.get('/jobs/:jobid', routes.job);
 app.get('/job/:jobid', routes.jobs);
 app.get('/users', user.list);

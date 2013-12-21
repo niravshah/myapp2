@@ -31,6 +31,11 @@ exports.job = function(req, response){
         args['eventUrl'] = result.eventUrl;
         args['fullURL'] = fullURL;
         args['jobid'] = jobid;
+        args['creatorFirstName']=result.creatorFirstName;
+        args['creatorLastName']=result.creatorLastName;
+        args['creatorId']=result.creatorId;
+        args['creatorUrl']=result.creatorUrl;
+        args['creatorPictureUrl']=result.creatorPictureUrl;
         response.render('job',args);
     })
 };
