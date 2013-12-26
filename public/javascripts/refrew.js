@@ -103,18 +103,18 @@ $(function(){
                 var skills = $('#skills-input').val();
                 console.log(loc + skills);
                 Eventbrite({'app_key': "P47XBRPQTVS7YF64Z5"}, function(eb){
-                    var params = {'city': loc, 'keywords':skills};
+                    var params = {'city': loc, 'keywords':skills,'max':50,'date':'Future'};
                     eb.event_search( params, function( response ){
-                    $('#no-of-events').html(response.events.length);
-                    response.events.shift();
-                    collection = new Backbone.Collection(response.events);
-                    var view = new CollectionView({
-                        collection: collection
+                        $('#no-of-events').html(response.events.length);
+                        response.events.shift();
+                        collection = new Backbone.Collection(response.events);
+                        var view = new CollectionView({
+                            collection: collection
+                        });
+                        $('#event-list').html(view.render().el);
+                        $('.progress-bar').css('width','100%');
+                        $('.progress-bar').attr('data-original-title','100%');
                     });
-                    $('#event-list').html(view.render().el);
-                    $('.progress-bar').css('width','100%');
-                    $('.progress-bar').attr('data-original-title','100%');
-                });
                 });
             }else if($('.step-pane.active')[0].id == 'step3'){
                 

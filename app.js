@@ -8,8 +8,20 @@ var routes = require('./routes');
 var user = require('./routes/user');
 var http = require('http');
 var path = require('path');
+var upload = require('jquery-file-upload-middleware');
 
 var app = express();
+
+
+upload.configure({
+    uploadDir: '/home/refrew/myapp2/public/images/rewards/',
+    imageVersions: {
+        thumbnail: {
+            width: 80,
+            height: 80
+        }
+    }
+});
 
 // all environments
 
@@ -38,9 +50,10 @@ if ('development' == app.get('env')) {
   app.use(express.errorHandler());
 }
 
-app.get('/index', routes.index);
+app.get('/reward', routes.reward);
+app.use('/upload', upload.fileHandler());
+app.get('/recruit', routes.recruit);
 app.get('/jobs/:jobid', routes.job);
-app.get('/job/:jobid', routes.jobs);
 app.get('/users', user.list);
 
 

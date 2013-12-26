@@ -20,13 +20,16 @@
         var jobid = $('#job-id').val();
         var controller = new Mod.Controller();
         IN.API.Profile("me")
-                    .fields(["firstName", "lastName", "id", "publicProfileUrl"])
+                    .fields(["firstName", "lastName", "id", "publicProfileUrl","pictureUrl","headline","positions"])
                     .result(function (results) {
                         if($('#creator-id').val() != results.values[0].id){
                             $('#referer-first-name').val(results.values[0].firstName);
                             $('#referer-last-name').val(results.values[0].lastName);
                             $('#referer-url').val(results.values[0].publicProfileUrl);
                             $('#referer-id').val(results.values[0].id);
+                            $('#referer-picture-url').val(results.values[0].pictureUrl);
+                            $('#referer-headline').val(results.values[0].headline);
+                            $('#referer-company').val(results.values[0].positions.values[0].company.name);
                             var Referral = Parse.Object.extend("referral");
                             var query = new Parse.Query(Referral);
                             query.equalTo("refererId", results.values[0].id);
@@ -34,12 +37,10 @@
                             query.find({
                                 success:function(results){
                                     if(results.length > 0){
-                                        $('#user-referrals').show();
                                         controller.displayUserSelectedReferral(results);
                                     }
-                                    if(0 < results.length < 2){
-                                        $('#linkedin-search').show();
-                                        $('#search-keywords').val(keywords);                            
+                                    if(results.length < 2){
+                                        $('#search-keywords').val(keywords); 
                                         controller.peopleSearch(keywords);
                                     }
                                 }
@@ -50,10 +51,7 @@
                             query.equalTo("jobid", jobid);
                             query.find({
                                 success:function(results){
-                                    if(results.length > 0){
-                                        $('#user-referrals').show();
-                                        controller.displayUserSelectedReferral(results);
-                                    }
+                                    controller.displayAllReferrals(results);
                                 }
                             });
                         }
@@ -184,8 +182,22 @@
                     <input type="hidden" id="referer-first-name" value=""/>
                     <input type="hidden" id="referer-last-name" value=""/>
                     <input type="hidden" id="referer-url" value=""/>
-                    <input type="hidden" id="referer-id" value=""/>                      
+                    <input type="hidden" id="referer-id" value=""/>
+                    <input type="hidden" id="referer-picture-url" value=""/>
+                    <input type="hidden" id="referer-headline" value=""/>
+                    <input type="hidden" id="referer-company" value=""/>
                 </div><!-- row -->
+                <div id="all-referrals" style="display:none;" class="row">
+                    <div class="col-lg-6">
+                    <section class="panel">
+                        <header class="panel-heading">
+                            <p>Referrals</p>
+                        </header>
+                        <div id="all-user-referrals" class="panel-body scrollbar scroll-y m-b"></div>
+                    </section>
+                    </div>
+                    <div id="all-selected-ref" class="col-lg-6"></div>
+                </div>
             </section>
         </section>
     </section>
@@ -203,7 +215,11 @@
         
         <div class="pull-right text-muted m-t-sm">
         <%if (typeof id != 'undefined'){%>
-            <button data-objid="<%=id%>" class="destroy close">x</button>
+            <%if (typeof moreDetails == 'undefined'){%>
+                <button data-objid="<%=id%>" class="destroy close">x</button>
+            <%}else{%>
+                <i class="icon-check-empty"></i>
+            <%}%>
         <%}else{%>
             <i class="icon-circle"></i>
         <%}%>
@@ -211,9 +227,20 @@
         <div class="media-body">
             <input type="hidden" id="refree-first-name" value="<%=firstName%>"/>
             <input type="hidden" id="refree-last-name" value="<%=lastName%>"/>
-            <div><a name='name' href="<%=publicProfileUrl%>"><%=firstName%> <%=lastName%></a></div>
+            <div><a id="refree-full-name" name='name' href="<%=publicProfileUrl%>"><%=firstName%> <%=lastName%></a></div>
             <small id="refree-headline" class="text-muted"><%= headline%></small>
             <small id="refree-location" class="text-muted"><%=location.name%></small>
+            <%if (typeof moreDetails != 'undefined'){%>
+             <input type="hidden" id="refrer-first-name" value="<%=refererFirstName%>"/>
+             <input type="hidden" id="refrer-last-name" value="<%=refererLastName%>"/>
+             <input type="hidden" id="refrer-id" value="<%=refererId%>"/>
+             <input type="hidden" id="refrer-url" value="<%=refererUrl%>"/>
+             <input type="hidden" id="refrer-picture-url" value="<%=refererPictureUrl%>"/>
+             <input type="hidden" id="refrer-headline" value="<%=refererHeadline%>"/>
+             <input type="hidden" id="refrer-company" value="<%=refererCompany%>"/>
+             <input type="hidden" id="refree-about" value="<%=refreeAbout%>"/>
+             <input type="hidden" id="refree-rel" value="<%=refreeRel%>"/>
+            <%}%>
         </div>
     </div>
 </script>
@@ -241,7 +268,8 @@
                 <div class="form-group">
                     <p class="col-sm-6"> Tell us more about <%=name%> </p>
                     <div class="col-sm-12">
-                    <textarea id="refree-about" rows="8" data-trigger="keyup" data-rangelength="[20,200]" class="form-control parsley-validated"/>
+                    <textarea id="refree-about" rows="8" data-trigger="keyup" data-rangelength="[20,200]" class="form-control parsley-validated">
+                    Test About Message for <%=name%></textarea>
                     </div>
                 </div>
                 <div class="form-group">
@@ -253,6 +281,46 @@
     </div>
     </div>
 </script>
+<script type="text/template" id="selected-user-referral">
+    <div  class="panel">
+    <div class="panel-heading"><p>Referral Details for : <a href="<%=url%>" id="refree-name"><%=name%></a></p></div>
+    <div style="height:600px" class="panel-body scrollbar scroll-y m-b">
+        <ul class="list-group alt"/>
+        <p>Referred By</p>
+        <li class="list-group-item">
+            <div class="media">
+                <span class="pull-left thumb-sm">
+                    <%if (typeof refrerPictureUrl != 'undefined'){%>
+                        <img id="refree-img" src="<%=refrerPictureUrl%>" alt="<%=refrerFirstName%>" class="img-circle">
+                    <%}else{%>
+                        <img id="refree-img" src="" alt="<%=refrerFirstName%>" class="img-circle">
+                    <%}%>
+                </span>
+                <div class="media-body">
+                    <input type="hidden" id="refrer-first-name" value="<%=refrerFirstName%>"/>
+                    <input type="hidden" id="refrer-last-name" value="<%=refrerLastName%>"/>
+                    <div><a name='name' href="<%=refrerUrl%>"><%=refrerFirstName%> <%=refrerLastName%></a></div>
+                    <small id="refrer-headline" class="text-muted"><%= refrerHeadline%></small>
+                    <small id="refrer-company" class="text-muted"> (<%=refrerCompany%>)</small>
+                </div>
+            </div>
+        </li>
+        <br/>
+        <p><%=refrerFirstName%> and <%=name%> are <%=refreeRel%></p>
+        <br/>
+        <p>What <%=refrerFirstName%> has to say about <%=name%> ? </p>
+        <li class="list-group-item">
+        <div class="media">
+                <div class="media-body">
+                    <p><%=refreeAbout%></p>
+                </div>
+            </div>
+        </li>        
+        </ul>
+    </div>
+    </div>
+</script>
+
 <script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
 <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
 </body>

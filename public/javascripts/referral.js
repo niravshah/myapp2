@@ -52,6 +52,15 @@ $(function () {
             _this.render();
         }
     });
+    
+    
+    Mod.SelectedReferralView = Backbone.Marionette.ItemView.extend({
+        model: Mod.LinkedInSearchResultModel,
+        template: '#selected-user-referral',
+        events: {
+            'click #save-referral': 'save'
+        }
+    });
 
     Mod.ReferralView = Backbone.Marionette.ItemView.extend({
         model: Mod.LinkedInSearchResultModel,
@@ -68,6 +77,9 @@ $(function () {
             saveArr['refererLastName'] = $('#referer-last-name').val();
             saveArr['refererId'] = $('#referer-id').val();
             saveArr['refererUrl'] = $('#referer-url').val();
+            saveArr['refererPictureUrl'] = $('#referer-picture-url').val();
+            saveArr['refererHeadline'] = $('#referer-headline').val();
+            saveArr['refererCompany'] = $('#referer-company').val();
             
             saveArr['refreeFirstName'] = $('#selected-refree-first-name').val();
             saveArr['refreeLastName'] = $('#selected-refree-last-name').val();
@@ -107,13 +119,49 @@ $(function () {
         }
     });
     
-     Mod.UserReferrals = Backbone.View.extend({
+    Mod.AllReferrals = Backbone.View.extend({
+        el: $('#all-referrals'),
+        events: {
+            "click .icon-check-empty": "displayDetails",
+             "click .icon-check": "hideDetails"
+        },
+        displayDetails : function(e){
+            $('.icon-check').addClass('icon-check-empty');
+            $('.icon-check').removeClass('icon-check');
+            $(e.target).removeClass('icon-check-empty');
+            $(e.target).addClass('icon-check');
+            var mB = $(e.target).parents('.media').children('.media-body');
+            var args={};
+            args['refrerFirstName'] = $(mB).children('#refrer-first-name').val();
+            args['refrerLastName'] = $(mB).children('#refrer-last-name').val();
+            args['refrerId'] = $(mB).children('#refrer-id').val();
+            args['refrerUrl'] = $(mB).children('#refrer-url').val();
+            args['refrerPictureUrl'] = $(mB).children('#refrer-picture-url').val();
+            args['refrerHeadline'] = $(mB).children('#refrer-headline').val();
+            args['refrerCompany'] = $(mB).children('#refrer-company').val();
+            args['refreeAbout'] = $(mB).children('#refree-about').val();
+            args['refreeRel'] = $(mB).children('#refree-rel').val();
+            args['name'] = $(mB).children('div').children('#refree-full-name').html();
+            args['url'] = $(mB).children('div').children('#refree-full-name').attr('href');
+            var mod = new Mod.LinkedInSearchResultModel(args);
+            var view = new Mod.SelectedReferralView({
+                model: mod
+            });
+            $('#all-selected-ref').html(view.render().el);
+        },
+        hideDetails : function(e){
+            $(e.target).removeClass('icon-check');
+            $(e.target).addClass('icon-check-empty');
+        }
+     });
+    
+    Mod.UserReferrals = Backbone.View.extend({
         el: $('#user-referrals'),
         events: {
             "click .destroy": "deleteReference"
         },
         deleteReference: function(e){
-            var objid =$ (e.target).attr('data-objid');
+            var objid = $(e.target).attr('data-objid');
             var referral = Parse.Object.extend("referral");
             var query = new Parse.Query(referral);
             query.get(objid, {
@@ -196,6 +244,7 @@ $(function () {
                 });
         },
         displayPeopleSearch: function (peopleSearch) {
+            $('#linkedin-search').show();
             var members = peopleSearch.people.values;
             var liSearchArr = [];
             for (var member in members) {
@@ -216,30 +265,63 @@ $(function () {
         },
         displayUserSelectedReferral : function(attributes){
             if(attributes.length > 0){
-                  $('#user-referrals').show();
-            }else{
-                  $('#user-referrals').hide();
+                $('#user-referrals').show();
+                var liSearchArr = [];
+                for(var runner in attributes){
+                    var obj = attributes[runner];
+                    var attr = obj.attributes;
+                    var a = [];
+                    a['id'] = obj.id;
+                    a['firstName']= attr['refreeFirstName'];
+                    a['lastName']= attr['refreeLastName'];
+                    a['headline']= attr['refreeHeadline'];
+                    a['pictureUrl'] = attr['refreePictureUrl'];
+                    a['publicProfileUrl'] = attr['refreeUrl'];
+                    var l =[];
+                    l['name'] = attr['refreeLocation']
+                    a['location'] = l;
+                    var model = new Mod.LinkedInSearchResultModel(a);
+                    liSearchArr.push(model);
+                }
+                var liSearchCollection = new Mod.LinkedInSearchResultCollection(liSearchArr);
+                var liSearchCollView = new Mod.LinkedInSearchResultCollectionView({collection: liSearchCollection});
+                $('#li-user-referrals').html(liSearchCollView.render().el);
             }
-            var liSearchArr = [];
-            for(var runner in attributes){
-                var obj = attributes[runner];
-                var attr = obj.attributes;
-                var a = [];
-                a['id'] = obj.id;
-                a['firstName']= attr['refreeFirstName'];
-                a['lastName']= attr['refreeLastName'];
-                a['headline']= attr['refreeHeadline'];
-                a['pictureUrl'] = attr['refreePictureUrl'];
-                a['publicProfileUrl'] = attr['refreeUrl'];
-                var l =[];
-                l['name'] = attr['refreeLocation']
-                a['location'] = l;
-                var model = new Mod.LinkedInSearchResultModel(a);
-                liSearchArr.push(model);
-            }
-            var liSearchCollection = new Mod.LinkedInSearchResultCollection(liSearchArr);
-            var liSearchCollView = new Mod.LinkedInSearchResultCollectionView({collection: liSearchCollection});
-            $('#li-user-referrals').html(liSearchCollView.render().el);
+        },
+        displayAllReferrals : function(attributes){
+             if(attributes.length > 0){
+                $('#all-referrals').show();
+                var liSearchArr = [];
+                for(var runner in attributes){
+                    var obj = attributes[runner];
+                    var attr = obj.attributes;
+                    var a = [];
+                    a['id'] = obj.id;
+                    a['firstName']= attr['refreeFirstName'];
+                    a['lastName']= attr['refreeLastName'];
+                    a['headline']= attr['refreeHeadline'];
+                    a['pictureUrl'] = attr['refreePictureUrl'];
+                    a['publicProfileUrl'] = attr['refreeUrl'];
+                    var l =[];
+                    l['name'] = attr['refreeLocation']
+                    a['location'] = l;
+                    a['moreDetails'] = true;
+                    a['refererFirstName']=attr['refererFirstName'];
+                    a['refererLastName']=attr['refererLastName'];
+                    a['refererId']=attr['refererId'];
+                    a['refererUrl']=attr['refererUrl'];
+                    a['refererPictureUrl']=attr['refererPictureUrl'];
+                    a['refererHeadline']=attr['refererHeadline'];
+                    a['refererCompany']=attr['refererCompany'];
+                    a['refreeAbout']=attr['refreeAbout'];
+                    a['refreeRel']=attr['refreeRel'];
+                    var model = new Mod.LinkedInSearchResultModel(a);
+                    liSearchArr.push(model);
+                }
+                var liSearchCollection = new Mod.LinkedInSearchResultCollection(liSearchArr);
+                var liSearchCollView = new Mod.LinkedInSearchResultCollectionView({collection: liSearchCollection});
+                $('#all-user-referrals').html(liSearchCollView.render().el);                
+             }
         }
     });
 
@@ -250,6 +332,7 @@ $(function () {
         initialize: function () {
             new Mod.SaveView();
             new Mod.UserReferrals();
+            new Mod.AllReferrals();
             Parse.initialize("1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG", "Hq7DY9cxSYsR3gmV3r4iFv62d8bT0xiNaP8EdZFL");
         }
 

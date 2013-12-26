@@ -1,13 +1,20 @@
 var superagent = require('superagent');
 
 exports.index = function(req, res){
-  res.render('index');
-};
-
-exports.jobs = function(req, res){
   res.render('hello.html');
 };
 
+exports.recruit = function(req, res){
+  res.render('recruit');
+};
+
+exports.reward = function(req, res){
+  res.render('reward');
+};
+
+exports.upload = function(req, response){
+ console.log(req.files);
+};
 
 exports.job = function(req, response){
     var jobid = req.params['jobid'];
