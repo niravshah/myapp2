@@ -1,8 +1,6 @@
 var superagent = require('superagent');
+var cc = require('coupon-code');
 
-exports.index = function(req, res){
-  res.render('hello.html');
-};
 
 exports.recruit = function(req, res){
   res.render('recruit');
@@ -15,6 +13,22 @@ exports.reward = function(req, res){
 exports.upload = function(req, response){
  console.log(req.files);
 };
+
+exports.cc = function(req, response){
+    
+    var parms = req.query.parms;
+    var resp = {}
+    for(var parm in parms){
+        var a = [];
+        for(i=0;i<parms[parm];i++){
+            var code = cc.generate({parts:3,partLen:4,});
+            a.push(code);
+        }
+        resp[parm] = a;
+    }
+    response.send(resp);
+};
+
 
 exports.job = function(req, response){
     var jobid = req.params['jobid'];
@@ -43,6 +57,6 @@ exports.job = function(req, response){
         args['creatorId']=result.creatorId;
         args['creatorUrl']=result.creatorUrl;
         args['creatorPictureUrl']=result.creatorPictureUrl;
-        response.render('job',args);
+        response.render('refer',args);
     })
 };

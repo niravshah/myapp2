@@ -3,9 +3,56 @@
 <head>
 {{include _head}}
 <script type="text/javascript">
+    var Mod = {};
     function onLinkedInLoad() {
          console.log('LN Load');
     };
+    
+    function upload(){
+        var $files = $('.image-data');
+        $.each($files,function(index){
+            var data = $(this).data();    
+            data.submit();  
+            $(this).removeClass('image-data');
+        });   
+    };
+    
+    function generateCodes(){
+        var arr = {};
+        var dens = $('[id^=vcodes-den]');
+        var qtys = $('[id^=vcodes-qty]');
+        var codes = $('[id^=vcodes-code]');
+        for(i=0;i<dens.length;i++){
+            arr[dens[i].innerText] = qtys[i].value;
+        }
+        
+        $.ajax({
+            url: '/cc',
+            data:{parms:arr},
+            success: function(results){
+                console.log('Success',results);
+                for(var result in results){
+                    for(i=0;i<dens.length;i++){
+                        if(dens[i].innerText == result){
+                           $(codes[i]).val(results[result].toString());
+                        }
+                    }
+                }
+            }
+        });
+    };
+    
+    function actionButtonClicked(){
+        var prevTarget = $('ul[class="steps"] li[class="active"]').attr('data-target');
+        if(prevTarget == '#step2'){
+            var all = $('#voucher-pills').children('ul').children('li');
+            var denArr = [];
+            for(i=0;i<all.length;i++){
+                denArr.push(all[i].innerText);
+            }
+            new Mod.VcodesController().displayResults(denArr);
+        }
+    }
 </script>
 </head>
 <body>
@@ -33,22 +80,26 @@
             <div class="col-lg-12">
             <section class="panel">
                 <div class="wizard clearfix">
-                   <ul class="steps">
-                      <li data-target="#step1" class="active"><span class="badge badge-info">1</span>Step 1</li>
-                      <li data-target="#step2"><span class="badge">2</span>Step 2</li>
-                      <li data-target="#step3"><span class="badge">3</span>Step 3</li>
-                   </ul>
-                   <div class="actions"> <button type="button" class="btn btn-white btn-xs btn-prev" disabled="disabled">Prev</button> <button type="button" class="btn btn-white btn-xs btn-next" data-last="Finish">Next</button> </div>
+                    <ul class="steps">
+                      <li data-target="#step1" class="active"><span class="badge badge-info">1</span>Reward Details</li>
+                      <li data-target="#step2"><span class="badge">2</span>Reward Card Images</li>
+                      <li data-target="#step3"><span class="badge">3</span>Reward Codes</li>
+                      <li data-target="#step4"><span class="badge">4</span>Verification Details</li>
+                    </ul>
+                    <div class="actions">
+                        <button type="button" class="btn btn-white btn-xs btn-prev" onclick="javaScript:actionButtonClicked();" disabled="disabled">Prev</button>
+                        <button type="button" class="btn btn-white btn-xs btn-next" onclick="javaScript:actionButtonClicked();" data-last="Finish">Next</button>
+                    </div>
                 </div>
                 <div class="step-content">
                    <div class="step-pane active" id="step1">
                         <div class="m-b">
                             <p>Name Your Rewards Campaign</p>
-                            <input type="text" class="form-control" data-trigger="change" data-required="true" data-type="url" placeholder="website">
+                            <input type="text" class="form-control" data-trigger="change" data-required="true" data-type="url" placeholder="Acme Corp Gift Voucher">
                         </div>
                         <div class="m-b">
                             <p>Voucher Denominations</p>
-                            <div id="MyPillbox" class="pillbox clearfix m-b">
+                            <div id="voucher-pills" class="pillbox clearfix m-b">
                               <ul>
                                  <li class="label bg-dark">£5</li>
                                  <li class="label bg-success">£10</li>
@@ -59,12 +110,63 @@
                             </div>
                         </div>
                         <div class="m-b">
-                            <!-- The file input field used as target for the file upload widget -->
-                            <input id="fileupload" type="file" name="files[]" multiple>
+                            <div class="row">
+                            <div class="col-lg-6">
+                            <p>Campaign Start Date</p>
+                            <input class="input-sm input-s datepicker form-control" size="16" type="text" value="" data-date-format="dd-mm-yyyy">
+                            </div>
+                            <div class="col-lg-6">
+                            <p>Campaign End Date</p>
+                            <input class="input-sm input-s datepicker form-control" size="16" type="text" value="" data-date-format="dd-mm-yyyy">
+                            </div>
+                            </div>
                         </div>
                    </div>
-                   <div class="step-pane" id="step2">This is step 2</div>
-                   <div class="step-pane" id="step3">This is step 3</div>
+                   <div class="step-pane" id="step2">
+                        <div class="m-b">
+                            <p>Upload Images/Artwork that will appear on the Vouchers</p>
+                        </div>
+                        <div class="m-b">
+                            <input id="fileupload" type="file" name="files[]" multiple>
+                            <br>
+                            <div id="files" class="files row"></div>
+                            <div id="file-data"></div>
+                        </div>
+                        <div class="m-b">
+                            <div class="checkbox"> 
+                                <label class="checkbox-custom"> <input type="checkbox" name="checkboxA"> 
+                                    <i class="icon-unchecked checked"></i>I dont want to upload images
+                                </label> 
+                            </div>
+                        </div>
+                    </div>
+                   <div class="step-pane" id="step3">
+                        <div class="m-b">
+                            <p>You can manually enter the Rewards Codes or Generate Codes using our system</p>
+                        </div>
+                        <section class="panel">
+                            <header class="panel-heading">
+                            <div class="row">
+                            <div class="col-lg-2">
+                                <p>Denomination</p>
+                            </div>
+                            <div class="col-lg-2">
+                                <p>Quantity</p>
+                            </div>
+                            <div class="col-lg-8">
+                                <p>Voucher Codes</p>
+                            </div>
+                            </header>
+                            <section class="panel-body">
+                                <div id="vcodes-div"></div>
+                            </section>
+                        </section>
+                        <div class="m-b">
+                            <p>Before you press 'Generate Code' - Select the appropriate number of vouchers for each Denomination above</p>
+                            <a href="#" onclick="javascript:generateCodes();" class="btn btn-white"><i class="icon-barcode"></i>Generate Codes</a>
+                        </div>
+                   </div>
+                   <div class="step-pane" id="step4">This is step 4</div>
                 </div>
             </section>
             </div>
@@ -74,34 +176,105 @@
     </section>
 </section>
 <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
-<script src="javascripts/refrew.js"></script>
-<script src="javascripts/jquery.fileupload.js"></script>
+<script src="javascripts/reward.js"></script>
+<script src="javascripts/vendor/jquery.iframe-transport.js"></script>
+<script src="javascripts/vendor/jquery.ui.widget.js"></script>
+<!-- The Load Image plugin is included for the preview images and image resizing functionality -->
+<script src="http://blueimp.github.io/JavaScript-Load-Image/js/load-image.min.js"></script>
+<!-- The Canvas to Blob plugin is included for image resizing functionality -->
+<script src="http://blueimp.github.io/JavaScript-Canvas-to-Blob/js/canvas-to-blob.min.js"></script>
+<script src="javascripts/vendor/jquery.fileupload.js"></script>
+<script src="javascripts/vendor/jquery.fileupload-process.js"></script>
+<script src="javascripts/vendor/jquery.fileupload-image.js"></script>
 <script type='text/javascript' src="http://evbdn.eventbrite.com/s3-s3/static/js/platform/Eventbrite.jquery.js"></script>
 <script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
 <script>
 $(function () {
     'use strict';
-    // Change this to the location of your server-side upload handler:
-    var url = 'http://refrew.kd.io/upload';
+    var url = '/upload';
     $('#fileupload').fileupload({
         url: url,
         dataType: 'json',
-        done: function (e, data) {
-            $.each(data.result.files, function (index, file) {
-                $('<p/>').text(file.name).appendTo('#files');
-            });
-        },
-        progressall: function (e, data) {
-            var progress = parseInt(data.loaded / data.total * 100, 10);
-            $('#progress .progress-bar').css(
-                'width',
-                progress + '%'
-            );
+        autoUpload: false,
+        acceptFileTypes: /(\.|\/)(gif|jpe?g|png)$/i,
+        maxFileSize: 5000000,
+        disableImageResize: /Android(?!.*Chrome)|Opera/
+            .test(window.navigator.userAgent),
+        previewMaxWidth: 200,
+        previewMaxHeight: 200,
+        previewCrop: true
+    }).on('fileuploadadd', function (e, data) {
+        data.context = $('<div class="col-lg-3"/>').appendTo('#files');
+        $.each(data.files, function (index, file) {
+            var node = $('<span/>')
+                        .text(file.name)
+                        .appendTo(data.context);
+        });
+        
+        var newDiv = $('<div/>')
+                        .addClass('image-data')
+                        .data(data)
+                        .appendTo('#file-data');
+
+    }).on('fileuploadprocessalways', function (e, data) {
+        var index = data.index,
+            file = data.files[index],
+            node = $(data.context.children()[index]);
+        if (file.preview) {
+            node
+                .append('<br>')
+                .append(file.preview);
         }
+        if (file.error) {
+            node
+                .append('<br>')
+                .append($('<span class="text-danger"/>').text(file.error));
+        }
+    }).on('fileuploaddone', function (e, data) {
+        $.each(data.result.files, function (index, file) {
+            if (file.url) {
+                var link = $('<a>')
+                    .attr('target', '_blank')
+                    .prop('href', file.url);
+                $(data.context.children()[index])
+                    .wrap(link);
+            } else if (file.error) {
+                var error = $('<span class="text-danger"/>').text(file.error);
+                $(data.context.children()[index])
+                    .append('<br>')
+                    .append(error);
+            }
+        });
+    }).on('fileuploadfail', function (e, data) {
+        $.each(data.files, function (index, file) {
+            var error = $('<span class="text-danger"/>').text('File upload failed.');
+            $(data.context.children()[index])
+                .append('<br>')
+                .append(error);
+        });
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');
 });
 </script>
-
+<script type="text/template" id="vcode-item-template">
+    <div class="m-b">
+        <div class="row">
+        <div class="col-lg-2">
+            <p id="vcodes-den-<%=index%>"><%=denomination%></p>
+        </div>
+        <div class="col-lg-2">
+            <div id="spinner-<%=index%>" class="spinner input-group m-b input-s-sm">
+                <input id="vcodes-qty-<%=index%>"type="text" class="input-sm form-control spinner-input" value="1" name="spinner" maxlength="2"> 
+                <div class="btn-group btn-group-vertical input-group-btn"> 
+                    <button type="button" class="btn btn-white spinner-up"> <i class="icon-chevron-up"></i> </button> 
+                    <button type="button" class="btn btn-white spinner-down"> <i class="icon-chevron-down"></i> </button> 
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <textarea id="vcodes-code-<%=index%>" placeholder="Enter comma seperated list of Reward Codes or press Generate Codes" rows="1" data-trigger="keyup" data-rangelength="[20,200]" class="form-control"></textarea>
+        </div>
+    </div>
+</script>
 </body>
 </html>
