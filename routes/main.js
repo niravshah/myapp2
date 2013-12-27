@@ -15,7 +15,6 @@ exports.upload = function(req, response){
 };
 
 exports.cc = function(req, response){
-    
     var parms = req.query.parms;
     var resp = {}
     for(var parm in parms){
@@ -28,6 +27,11 @@ exports.cc = function(req, response){
     }
     response.send(resp);
 };
+
+exports.imgupload = function(req,response){
+    
+}
+
 
 
 exports.job = function(req, response){

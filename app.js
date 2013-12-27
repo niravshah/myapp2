@@ -14,7 +14,7 @@ var app = express();
 
 upload.configure({
     uploadDir: '/home/refrew/myapp2/public/images/rewards/',
-    uploadUrl:'images/rewards',
+    uploadUrl:'/images/rewards',
     imageVersions: {
         thumbnail: {
             width: 80,
@@ -52,9 +52,22 @@ if ('development' == app.get('env')) {
 
 app.get('/cc', routes.cc);
 app.get('/reward', routes.reward);
-app.use('/upload', upload.fileHandler());
 app.get('/recruit', routes.recruit);
 app.get('/jobs/:jobid', routes.job);
+
+app.use('/upload', function (req, res, next) {
+            console.log('Upload 2', req.query.rid);
+            upload.fileHandler({
+                uploadDir: function () {
+                    return '/home/refrew/myapp2/public/images/rewards/' + req.query.rid;
+                },
+                uploadUrl: function () {
+                    return '/images/rewards/' + req.query.rid;
+                }
+            })(req, res, next);
+});
+
+//app.use('/upload', upload.fileHandler());
 
 
 http.createServer(app).listen(app.get('port'), function(){
