@@ -14,25 +14,37 @@ $(function () {
         previewCrop: true
     }).on('fileuploadadd', function (e, data) {
         data.context = $('<div class="col-lg-3"/>').appendTo('#files');
+        
+        var panel = $('<section class="panel"/>')
+        var header = $('<header class="panel-heading">');
+        var body = $('<section class="panel-body"/>')
+        
+        var del = $('<button type="button" class="close img-close"/>');
+        var ic = $('<i class="icon-remove">');
+        ic.appendTo(del);
+        
+        
         $.each(data.files, function (index, file) {
             var node = $('<span/>')
                         .text(file.name)
-                        .appendTo(data.context);
+                        .appendTo(header);
+            del.appendTo(header);
+            header.appendTo(panel);
+            body.appendTo(panel);
+            panel.appendTo(data.context);
         });
         
         var newDiv = $('<div/>')
                         .addClass('image-data')
                         .data(data)
-                        .appendTo('#file-data');
+                        .appendTo(data.context);
 
     }).on('fileuploadprocessalways', function (e, data) {
         var index = data.index,
             file = data.files[index],
-            node = $(data.context.children()[index]);
+            node = $(data.context).children().children('.panel-body')[index];
         if (file.preview) {
-            node
-                .append('<br>')
-                .append(file.preview);
+            $(node).append(file.preview);
         }
         if (file.error) {
             node
@@ -77,6 +89,13 @@ $(function () {
         });
     }).on('fileuploadprogressall', function (e, data) {
         var progress = parseInt(data.loaded / data.total * 100, 10);
+        $('.progress-bar').css(
+            'width',
+            progress + '%'
+        );
+        
+        $('.progress-bar').attr('data-original-title',progress+'%');
+        if(progress == 100){$('#image-upload-msg').show();}
 
     }).prop('disabled', !$.support.fileInput)
         .parent().addClass($.support.fileInput ? undefined : 'disabled');

@@ -40,7 +40,8 @@ $(function(){
             'click #generate-codes' :'generateCodes',
             'click #rewards-prev' :'actionButtonClicked',
             'click #rewards-next' :'actionButtonClicked',
-            'click #save-reward' :'saveReward'
+            'click #save-reward' :'saveReward',
+            'click .img-close' : 'closeClicked'
         },
         generateCodes: function(){
             var arr = {};
@@ -74,7 +75,10 @@ $(function(){
             }
         },
         saveReward:function(){
-            
+            $('#save-reward').addClass('disabled');
+            $('#save-reward').text('Saving...');
+            if($('.image-data').length > 0)
+                $('#progress-bar').show();
             var Reward = Parse.Object.extend("reward");
             var query = new Parse.Query(Reward);
             var rewardId = 1;
@@ -116,6 +120,9 @@ $(function(){
                     newReward.save(rO,{
                         success:function(){
                             console.log('Saved new Reward ', rewardId);
+                            $('#save-reward').removeClass('btn-info');
+                            $('#save-reward').addClass('btn-success');
+                            $('#save-reward').text('Saved Successfully!');
                         },
                         error:function(){
                             console.log('Error saving new Reward ',rewardId);
@@ -127,10 +134,9 @@ $(function(){
                 },
                 error: function(error){}
             });
-            
-            
-            
-            
+        },
+        closeClicked:function(event){
+            $(event.target).closest('.col-lg-3').remove();
         }
     });
 

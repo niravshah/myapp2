@@ -45,9 +45,10 @@
                 <div class="wizard clearfix">
                     <ul class="steps">
                       <li data-target="#step1" class="active"><span class="badge badge-info">1</span>Reward Details</li>
-                      <li data-target="#step2"><span class="badge">2</span>Reward Card Images</li>
+                      <li data-target="#step2"><span class="badge">2</span>Reward Artwork/Images</li>
                       <li data-target="#step3"><span class="badge">3</span>Reward Codes</li>
                       <li data-target="#step4"><span class="badge">4</span>Verification Details</li>
+                      <li data-target="#step5"><span class="badge">5</span>Save</li>
                     </ul>
                     <div class="actions">
                         <button id="rewards-prev" type="button" class="btn btn-white btn-xs btn-prev" disabled="disabled">Prev</button>
@@ -57,7 +58,7 @@
                 <div class="step-content">
                    <div class="step-pane active" id="step1">
                         <div class="m-b">
-                            <p>Name Your Rewards Campaign</p>
+                            <p>Rewards Name</p>
                             <input id="campaign-name" type="text" class="form-control" placeholder="Acme Corp Gift Voucher" value="Amazon.co.uk Vouchers">
                             <input type="hidden" id="reward-id" value=""/>
                         </div>
@@ -76,11 +77,11 @@
                         <div class="m-b">
                             <div class="row">
                             <div class="col-lg-6">
-                            <p>Campaign Start Date</p>
+                            <p>Valid From</p>
                             <input id="campaign-start" class="input-sm input-s datepicker form-control" size="16" type="text" value="None" data-date-format="dd-mm-yyyy">
                             </div>
                             <div class="col-lg-6">
-                            <p>Campaign End Date</p>
+                            <p>Valid To</p>
                             <input id="campaign-end" class="input-sm input-s datepicker form-control" size="16" type="text" value="None" data-date-format="dd-mm-yyyy">
                             </div>
                             </div>
@@ -88,11 +89,9 @@
                    </div>
                    <div class="step-pane" id="step2">
                         <div class="m-b">
-                            <p>Upload Images/Artwork that will appear on the Vouchers</p>
+                            <input id="fileupload" type="file" name="files[]" title="Upload Files" multiple>
                         </div>
                         <div class="m-b">
-                            <input id="fileupload" type="file" name="files[]" multiple>
-                            <br>
                             <div id="files" class="files row"></div>
                             <div id="file-data"></div>
                         </div>
@@ -124,12 +123,23 @@
                             <a id="generate-codes" class="btn btn-white"><i class="icon-barcode"></i>Generate Codes</a>
                         </div>
                    </div>
-                   <div class="step-pane" id="step4">
+                   <div class="step-pane" id="step4">Verification Details</div>
+                   <div class="step-pane" id="step5">
                         <div class="m-b">
                             <button class="btn btn-info" id="save-reward"> 
-                                <i class="icon-save"></i> <span class="text">Save</span> 
+                                <i class="icon-save"></i> <span class="text">Save Reward</span> 
                             </button> 
                         </div>
+                       <div id="progress-bar" class="m-b" style="display:none">
+                            <p>Your Campaign Images are still being Uploaded! Please Wait....</p>
+                            <div class="progress progress-sm progress-striped active"> 
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" data-original-title="5%" style="width:5%"></div>
+                            </div>
+                            <div id="image-upload-msg" class="alert alert-success" style="display:none"> 
+                                <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button> 
+                                <i class="icon-ok-sign"></i><strong>Image Upload Successful !</strong>. 
+                            </div>   
+                        </div>                        
                    </div>
                 </div>
             </section>
