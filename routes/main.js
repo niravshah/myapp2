@@ -1,13 +1,16 @@
 var superagent = require('superagent');
 var cc = require('coupon-code');
 
+exports.index = function(req, res){
+  res.render('landing');
+};
 
 exports.recruit = function(req, res){
   res.render('recruit');
 };
 
-exports.reward = function(req, res){
-  res.render('reward');
+exports.rewards = function(req, res){
+  res.render('campaign');
 };
 
 exports.upload = function(req, response){
@@ -28,16 +31,10 @@ exports.cc = function(req, response){
     response.send(resp);
 };
 
-exports.imgupload = function(req,response){
-    
-}
-
-
-
 exports.job = function(req, response){
     var jobid = req.params['jobid'];
     var json = null;
-  superagent
+    superagent
     .get('https://api.parse.com/1/classes/job')
     .set('X-Parse-Application-Id','1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG')
     .set('X-Parse-REST-API-Key','K3uloUR0JnYSZBoWp2b70eE31Erh2mT2KZdQK7yf')
@@ -62,5 +59,46 @@ exports.job = function(req, response){
         args['creatorUrl']=result.creatorUrl;
         args['creatorPictureUrl']=result.creatorPictureUrl;
         response.render('refer',args);
+    })
+};
+
+exports.reward = function(req, response){
+    var rewardid = req.params['rewardid'];
+    var json = null;
+    superagent
+    .get('https://api.parse.com/1/classes/reward')
+    .set('X-Parse-Application-Id','1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG')
+    .set('X-Parse-REST-API-Key','K3uloUR0JnYSZBoWp2b70eE31Erh2mT2KZdQK7yf')
+    .set('Accept', 'application/json')
+    .query({where:'{"rewardId":'+rewardid+'}'})
+    .end(function(e,res){
+        json = JSON.parse(res.text);
+        var result = json['results'][0];
+        superagent
+            .get('https://api.parse.com/1/classes/rImages')
+            .set('X-Parse-Application-Id','1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG')
+            .set('X-Parse-REST-API-Key','K3uloUR0JnYSZBoWp2b70eE31Erh2mT2KZdQK7yf')
+            .set('Accept', 'application/json')
+            .query({where:'{"rewardId":'+rewardid+'}'})
+            .end(function(e,res){
+                json = JSON.parse(res.text);
+                if(json.results.length > 0){
+                    result['images'] = json['results'];
+                }
+                superagent
+                    .get('https://api.parse.com/1/classes/vcode')
+                    .set('X-Parse-Application-Id','1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG')
+                    .set('X-Parse-REST-API-Key','K3uloUR0JnYSZBoWp2b70eE31Erh2mT2KZdQK7yf')
+                    .set('Accept', 'application/json')
+                    .query({where:'{"rid":'+rewardid+'}'})
+                    .end(function(e,res){
+                        json = JSON.parse(res.text);
+                        if(json.results.length > 0){                        
+                            result['vcodes'] = json['results'];
+                        }
+                        console.log(result);
+                        response.render('reward',result);
+                    });
+            });
     })
 };

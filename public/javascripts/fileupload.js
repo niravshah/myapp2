@@ -68,6 +68,7 @@ $(function () {
                 var n = {};
                 n['rewardId'] = parseInt($('#reward-id').val());
                 n['image'] = file.url;
+                n['thumbnailUrl'] = file.thumbnailUrl;
                 saveImg.save(n,{
                     success:function(result){console.log('Saved a Reward Image');},
                     error:function(err){console.log('Error',err);}

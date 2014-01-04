@@ -80,6 +80,7 @@ $(function(){
             if($('.image-data').length > 0)
                 $('#progress-bar').show();
             var Reward = Parse.Object.extend("reward");
+            var Vcode = Parse.Object.extend("vcode");
             var query = new Parse.Query(Reward);
             var rewardId = 1;
             query.exists("rewardId");
@@ -105,18 +106,38 @@ $(function(){
                     rO['campaignName']=$('#campaign-name').val();
                     rO['campaignStart']=$('#campaign-start').val();
                     rO['campaignEnd']=$('#campaign-end').val();
+                    
                     var vcodes = {};
                     var dens = $('[id^=vcodes-den]');
                     var qtys = $('[id^=vcodes-qty]');
                     var codes = $('[id^=vcodes-code]');
                     for(i=0;i<dens.length;i++){
                         if($(codes[i]).val().indexOf(',') > 0){
-                         vcodes[dens[i].innerText] = $(codes[i]).val().split(',');
+                         var vcodeArr = $(codes[i]).val().split(',');
+                         for (var vcod in vcodeArr){
+                             newVcode = {};
+                             newVc = new Vcode();
+                             newVcode['denomination'] = dens[i].innerText;
+                             newVcode['value'] = dens[i].innerText.split("£")[1];
+                             newVcode['currency']=$('.dropdown-label')[0].innerHTML;
+                             newVcode['vcode'] = vcodeArr[vcod];
+                             newVcode['rid'] = rewardId;
+                             newVcode['status'] = 'new';
+                             newVc.save(newVcode);
+                         }
                         }else{
-                            vcodes[dens[i].innerText] = $(codes[i]).val();
+                             newVcode = {};
+                             newVc = new Vcode();
+                             newVcode['denomination'] = dens[i].innerText;
+                             newVcode['value'] = dens[i].innerText.split("£")[1];
+                             newVcode['currency']=$('.dropdown-label')[0].innerHTML;
+                             newVcode['vcode'] = $(codes[i]).val();
+                             newVcode['rid'] = rewardId;
+                             newVcode['status'] = 'new';
+                             newVc.save(newVcode);
                         }
                     }
-                    rO['vcodes']=vcodes;
+                    
                     newReward.save(rO,{
                         success:function(){
                             console.log('Saved new Reward ', rewardId);

@@ -13219,6 +13219,33 @@ body #content {
     margin-top:50px;
     margin-bottom:50px;
 }
+.m-lg {
+    margin-top:25px;
+    margin-bottom:25px;
+}
+.circle{
+    width:2em;
+    height:2em;
+    -webkit-border-radius: 5em; 
+    -moz-border-radius: 5em;
+    padding-top: 0.25em;
+    font-size: 3em;
+    font-weight: bold;
+    margin:auto;
+}
+
+.sqrnd-sm{
+    width: 2em;
+    height: 2em;
+    -webkit-border-radius: 0.5em;
+    -moz-border-radius: 0.5em;
+    padding-top: 0.2em;
+    font-size: 1.5em;
+    margin: auto;
+    color: white;
+}
+
+
 @media (max-width:767px) {
     .landing #header,.landing #header .container {
     padding:0}
