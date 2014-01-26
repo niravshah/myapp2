@@ -1,5 +1,31 @@
 $(function(){
     
+    
+    CompanySearchResultModel = Backbone.Model.extend({
+    });
+
+    CompanySearchResultCollection = Backbone.Collection.extend({
+        model: CompanySearchResultModel
+    });
+
+    CompanySearchResultView = Backbone.Marionette.ItemView.extend({
+        model: CompanySearchResultModel,
+        template: '#lisearch-item-template',
+        tagName: 'li',
+        className: 'list-group-item'
+    });
+
+    CompanySearchResultCollectionView = Backbone.Marionette.CollectionView.extend({
+        itemView: CompanySearchResultView,
+        tagName: 'ul',
+        className: 'list-group alt',
+        initialize: function (options) {
+            var _this = this;
+            _.bindAll(this, "render");
+            _this.render();
+        }
+    });
+    
     ItemView = Backbone.Marionette.ItemView.extend({
         template: '#itemTemplate',
         tagName: 'li',
@@ -92,13 +118,62 @@ $(function(){
         }
     });
     
-    var TaskAppView = Backbone.View.extend({     
+    var CompanySearchView = Backbone.View.extend({     
         el: $('#main-widget'),
         events: {
-            "click #next-button"   : "click",
+            "click #next-button"   : "searchFoEvents",
+            "click #search-linkedin" : "companySearch",
+            "click .pull-right .icon-circle": "clickPullRightIconCircle"
         },
-        click: function(e) {
-            if($('.step-pane.active')[0].id == 'step1'){
+        companySearch:function(e){
+            IN.API.Raw('/company-search:(companies:(id,name,universal-name,website-url,locations,logo-url))?keywords=' + $('#search-keywords').val()).method('GET')
+            .result(function processResult(results){Mod.csv.displayCompanySearchResults(results.companies.values)})
+            .error(function processError(error){console.log(error)})
+        },
+        displayCompanySearchResults : function(values){
+                var liSearchArr = [];
+                for(var cpy in values){
+                    var model = new CompanySearchResultModel(values[cpy]);
+                    liSearchArr.push(model);
+                }
+                var coll = new CompanySearchResultCollection(liSearchArr);
+                var collView = new CompanySearchResultCollectionView({
+                    collection: coll
+                });
+                $('#li-search-results').html(collView.render().el);
+                $('#li-search-results').show();            
+        },
+        clickPullRightIconCircle: function (e) {
+            $(".text-success").addClass("text-muted");
+            $(".text-success").removeClass("text-success");
+            $(e.target).removeClass("text-muted");
+            $(e.target).addClass("text-success");
+            var child = $(e.target).parents('.media').children('.media-body').children('div').children('a');
+            var args = {};
+            args['name'] = $(child).html();
+            args['url'] = $(child).attr('href');
+            args['lnId']= $(child).attr('id');
+            args['uname']= $(child).attr('data-universal-name');
+            console.log(args);
+            $('#selected-company').text($(child).html());
+            $('#selected-company').show();
+            /*IN.API.PeopleSearch()
+                .fields("firstName", "lastName", "distance", 'positions', 'picture-url', 'headline', 'skills', 'location:(name)', "public-profile-url")
+                .params({"company-name": args['uname'],"count": 10,"sort": "distance"})
+                .result(function (results) {console.log(results)})
+                .error(function error(e) {console.log('peopleSearch Error:', e)});*/
+            IN.API.Connections("me")
+                .fields("firstName", "lastName", 'positions', 'picture-url', 'headline', 'skills', 'location:(name)', "public-profile-url")
+                .result(function (results) {
+                    for(val in results.values){
+                        
+                        console.log(result.values[val]);
+                    }
+                })
+                .error(function error(e) {console.log('peopleSearch Error:', e)});                
+        },
+        searchFoEvents: function(e) {
+            if($('.step-pane.active')[0].id == 'step5'){
                 var loc = $('#loc-input').val();
                 var skills = $('#skills-input').val();
                 console.log(loc + skills);
@@ -135,7 +210,7 @@ $(function(){
     
         },
         initialize: function () {
-            new TaskAppView();
+            Mod.csv = new CompanySearchView();
             new SaveView();
             Parse.initialize("1VLvUdvqRdm6AUlXbQRL2MbWERa65hMccF9GWzpG", "Hq7DY9cxSYsR3gmV3r4iFv62d8bT0xiNaP8EdZFL");
         }

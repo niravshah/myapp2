@@ -196,6 +196,9 @@ img {
 .img-circle {
     border-radius:50%;
 }
+.img-circle-10 {
+    border-radius:10%;
+}
 hr {
     margin-top:20px;
     margin-bottom:20px;
@@ -11560,7 +11563,7 @@ textarea::-webkit-scrollbar {
 }
 .nav-brand {
     text-align:center;
-    font-size:25px;
+    font-size:22px;
     line-height:30px;
     padding:10px;
     display:block;
@@ -11653,7 +11656,8 @@ textarea::-webkit-scrollbar {
     backface-visibility:hidden;
 }
 #nav .nav-avatar .thumb-sm {
-    width:30px;
+    width:50px;
+    margin: auto;
 }
 #nav .nav-avatar .arrow {
     left:15px;
@@ -11662,7 +11666,7 @@ textarea::-webkit-scrollbar {
     box-shadow:inset 0 1px 0 rgba(40,50,60,0.15);
 }
 #nav.nav-vertical {
-    width:80px;
+    width:90px;
 }
 #nav.nav-vertical.only-icon {
     width:60px;
@@ -11695,8 +11699,14 @@ textarea::-webkit-scrollbar {
 #nav.nav-vertical .nav-msg .dropdown-menu {
     top:-8px;
 }
-#nav.nav-vertical .nav-brand {
-    font-size:20px;
+#nav.nav-vertical .nav-brand.brand-long {
+    display:none;
+}
+#nav .nav-brand.brand-short{
+    display:none;
+}
+#nav.nav-vertical .nav-brand.brand-short{
+    display:block;
 }
 #nav.nav-vertical .nav-primary>ul>li>a {
     position:relative;
@@ -13223,6 +13233,11 @@ body #content {
     margin-top:25px;
     margin-bottom:25px;
 }
+.m-sm {
+    margin-top:10px;
+    margin-bottom:10px;
+}
+
 .circle{
     width:2em;
     height:2em;

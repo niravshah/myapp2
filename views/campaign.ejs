@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+{{include _head}}
+<script type="text/javascript">
+    var Mod = {};
+    function onLinkedInLoad() {
+         console.log('LN Load');
+    };
+    
+    function upload(){
+        var $files = $('.image-data');
+        $.each($files,function(index){
+            var data = $(this).data();    
+            data.submit();  
+            $(this).removeClass('image-data');
+        });   
+    };
+</script>
+</head>
+<body>
+<section class="hbox stretch">
+    <aside class="bg-success lter aside-sm" id="nav">
+        {{include _nav}}
+    </aside>
+    <section id="content">
+        <section class="vbox">
+            <header class="header bg-success lter b-b">
+                <ul class="nav nav-pills pull-right">
+                    <li>
+                        <div id="linkedin-logout" style="margin:8px;display:none;">
+                            <a href='javascript:linkedinLogout();' class="btn btn-white"><i class="icon-linkedin-sign"></i>Logout</a>
+                        </div>
+                        <div id="linkedin-signin" style="margin:15px;">
+                            <script type="IN/Login"></script>    
+                        </div>
+                    </li>
+                </ul>
+                <p>Launch Reward Campaigns. Boost Sales.</p>
+            </header>
+            <section class="scrollable wrapper">
+            <div class="row">
+            <div class="col-lg-12">
+            <section class="panel">
+                <div class="wizard clearfix">
+                    <ul class="steps">
+                      <li data-target="#step1" class="active"><span class="badge badge-info">1</span>Reward Details</li>
+                      <li data-target="#step2"><span class="badge">2</span>Reward Artwork/Images</li>
+                      <li data-target="#step3"><span class="badge">3</span>Reward Codes</li>
+                      <li data-target="#step4"><span class="badge">4</span>Verification Details</li>
+                      <li data-target="#step5"><span class="badge">5</span>Save</li>
+                    </ul>
+                    <div class="actions">
+                        <button id="rewards-prev" type="button" class="btn btn-white btn-xs btn-prev" disabled="disabled">Prev</button>
+                        <button id="rewards-next" type="button" class="btn btn-white btn-xs btn-next" data-last="Finish">Next</button>
+                    </div>
+                </div>
+                <div class="step-content">
+                   <div class="step-pane active" id="step1">
+                        <div class="m-b">
+                           <div class="row"> 
+                            <div class="col-lg-5">
+                                <p>Rewards Name</p>
+                                <input id="campaign-name" type="text" class="form-control" placeholder="Acme Corp Gift Voucher" value="Amazon.co.uk Vouchers">
+                                <input type="hidden" id="reward-id" value=""/>
+                            </div>
+                            <div class="col-lg-1">
+                                <p>Currency</p>
+                                <div class="input-group-btn clearfix m-b">
+                                    <button class="btn btn-white btn-sm dropdown-toggle" data-toggle="dropdown">
+                                    <span class="dropdown-label">GBP</span><span class="caret"></span> 
+                                    </button> 
+                                    <ul class="dropdown-menu dropdown-select pull-right"> 
+                                        <li class="active"> <a href="#"><input type="radio" value="USD" name="pay_unit">USD</a></li>
+                                        <li> <a href="#"><input type="radio" value="GBP" name="pay_unit" checked="">GBP</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                            <p>Valid From</p>
+                            <input id="campaign-start" class="input-sm input-s datepicker form-control" size="16" type="text" value="None" data-date-format="dd-mm-yyyy">
+                            </div>
+                            <div class="col-lg-3">
+                            <p>Valid To</p>
+                            <input id="campaign-end" class="input-sm input-s datepicker form-control" size="16" type="text" value="None" data-date-format="dd-mm-yyyy">
+                            </div>                            
+                            </div>
+                        </div>
+                        <div class="m-b">
+                            <p>Voucher Denominations</p>
+                            <div id="voucher-pills" class="pillbox clearfix m-b">
+                              <ul>
+                                 <li class="label bg-dark">£5</li>
+                                 <li class="label bg-success">£10</li>
+                                 <li class="label bg-warning">£20</li>
+                                 <li class="label bg-danger">£25</li>
+                                 <input type="text" placeHolder="add new"> 
+                              </ul>
+                            </div>
+                        </div>
+                   </div>
+                   <div class="step-pane" id="step2">
+                        <div class="m-b">
+                            <input id="fileupload" type="file" name="files[]" title="Upload Files" multiple>
+                        </div>
+                        <div class="m-b">
+                            <div id="files" class="files row"></div>
+                            <div id="file-data"></div>
+                        </div>
+                     
+                    </div>
+                   <div class="step-pane" id="step3">
+                        <div class="m-b">
+                            <p>You can manually enter the Rewards Codes or Generate Codes using our system</p>
+                        </div>
+                        <section class="panel">
+                            <header class="panel-heading">
+                            <div class="row">
+                            <div class="col-lg-2">
+                                <p>Denomination</p>
+                            </div>
+                            <div class="col-lg-2">
+                                <p>Quantity</p>
+                            </div>
+                            <div class="col-lg-8">
+                                <p>Voucher Codes</p>
+                            </div>
+                            </header>
+                            <section class="panel-body">
+                                <div id="vcodes-div"></div>
+                            </section>
+                        </section>
+                        <div class="m-b">
+                            <p>Before you press 'Generate Code' - Select the appropriate number of vouchers for each Denomination above</p>
+                            <a id="generate-codes" class="btn btn-white"><i class="icon-barcode"></i>Generate Codes</a>
+                        </div>
+                   </div>
+                   <div class="step-pane" id="step4">Verification Details</div>
+                   <div class="step-pane" id="step5">
+                        <div class="m-b">
+                            <button class="btn btn-info" id="save-reward"> 
+                                <i class="icon-save"></i> <span class="text">Save Reward</span> 
+                            </button> 
+                        </div>
+                       <div id="progress-bar" class="m-b" style="display:none">
+                            <p>Your Campaign Images are still being Uploaded! Please Wait....</p>
+                            <div class="progress progress-sm progress-striped active"> 
+                                <div class="progress-bar progress-bar-success" data-toggle="tooltip" data-original-title="5%" style="width:5%"></div>
+                            </div>
+                            <div id="image-upload-msg" class="alert alert-success" style="display:none"> 
+                                <button type="button" class="close" data-dismiss="alert"><i class="icon-remove"></i></button> 
+                                <i class="icon-ok-sign"></i><strong>Image Upload Successful !</strong>. 
+                            </div>   
+                        </div>                        
+                   </div>
+                </div>
+            </section>
+            </div>
+            </div>
+            </section>
+        </section>
+    </section>
+</section>
+
+<script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
+<script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
+<script src="javascripts/reward.js"></script>
+<script src="javascripts/fileupload.js"></script>
+
+<script src="javascripts/vendor/jquery.iframe-transport.js"></script>
+<script src="javascripts/vendor/jquery.ui.widget.js"></script>
+<script src="javascripts/vendor/load-image.min.js"></script>
+<script src="javascripts/vendor/jquery.fileupload.js"></script>
+<script src="javascripts/vendor/jquery.fileupload-process.js"></script>
+<script src="javascripts/vendor/jquery.fileupload-image.js"></script>
+
+<script type="text/template" id="vcode-item-template">
+    <div class="m-b">
+        <div class="row">
+        <div class="col-lg-2">
+            <p id="vcodes-den-<%=index%>"><%=denomination%></p>
+        </div>
+        <div class="col-lg-2">
+            <div id="spinner-<%=index%>" class="spinner input-group m-b input-s-sm">
+                <input id="vcodes-qty-<%=index%>"type="text" class="input-sm form-control spinner-input" value="1" name="spinner" maxlength="2"> 
+                <div class="btn-group btn-group-vertical input-group-btn"> 
+                    <button type="button" class="btn btn-white spinner-up"> <i class="icon-chevron-up"></i> </button> 
+                    <button type="button" class="btn btn-white spinner-down"> <i class="icon-chevron-down"></i> </button> 
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-8">
+            <textarea id="vcodes-code-<%=index%>" placeholder="Enter comma seperated list of Reward Codes or press Generate Codes" rows="1" data-trigger="keyup" data-rangelength="[20,200]" class="form-control"></textarea>
+        </div>
+    </div>
+</script>
+</body>
+</html>

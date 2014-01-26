@@ -13,6 +13,11 @@ exports.rewards = function(req, res){
   res.render('campaign');
 };
 
+exports.timeline = function(req, res){
+  res.render('timeline');
+};
+
+
 exports.upload = function(req, response){
  console.log(req.files);
 };

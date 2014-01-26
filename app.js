@@ -56,6 +56,7 @@ app.get('/rewards', routes.rewards);
 app.get('/recruit', routes.recruit);
 app.get('/jobs/:jobid', routes.job);
 app.get('/rewards/:rewardid', routes.reward);
+app.get('/timeline', routes.timeline);
 
 app.use('/upload', function (req, res, next) {
     upload.fileHandler({
