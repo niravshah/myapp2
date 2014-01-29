@@ -1,52 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    {{include _head}}
-    <script type="text/javascript">
-    var Mod = {};
-    function onLinkedInLoad() {
-         IN.Event.on(IN, "auth", onLinkedInAuth);
-    }
-    function onLinkedInAuth() {
-        $('#linkedin-logout').show();
-        $('#linkedin-signin').hide();
-        IN.API.Profile("me")
-                    .fields(["firstName", "lastName", "id", "publicProfileUrl","pictureUrl","headline","positions"])
-                    .result(function (results) {
-                        if($('#creator-id').val() != results.values[0].id){
-                        }
-                    });
-    }    
-    function linkedinLogout(){
-        IN.User.logout();
-        $('#linkedin-logout').hide();
-        $('#linkedin-signin').show();
-    }
-    </script>
-</head>
-<body>
-<section class="hbox stretch"> <!-- .aside -->
-    <aside class="bg-success lter nav-vertical aside-sm" id="nav">
-    {{include _nav}}
-    </aside>
-    <section id="content">
-        <section class="vbox">
-            <header class="header bg-light lter b-b">
-                <ul class="nav nav-pills pull-right">
-                    <li>
-                        <div id="linkedin-logout" style="margin:8px;display:none;">
-                            <a href='javascript:linkedinLogout();' class="btn btn-white"><i class="icon-linkedin-sign"></i>Logout</a>
-                        </div>
-                        <div id="linkedin-signin" style="margin:15px;">
-                            <script type="IN/Login"></script>    
-                        </div>
-                    </li>
-                </ul>
-                <p>Refer Friends. Earn Rewards.</p></p>
-            </header>
+   <head>
+      {{include _head}}
+      <script type="text/javascript">
+         var Mod = {};
+         function onLinkedInLoad() {
+              IN.Event.on(IN, "auth", onLinkedInAuth);
+         }
+         function onLinkedInAuth() {
+             $('#linkedin-logout').show();
+             $('#linkedin-signin').hide();
+             IN.API.Profile("me")
+                         .fields(["firstName", "lastName", "id", "publicProfileUrl","pictureUrl","headline","positions"])
+                         .result(function (results) {
+                             if($('#creator-id').val() != results.values[0].id){
+                             }
+                         });
+         }    
+         function linkedinLogout(){
+             IN.User.logout();
+             $('#linkedin-logout').hide();
+             $('#linkedin-signin').show();
+         }
+      </script>
+   </head>
+   <body>
+      <section class="hbox stretch">
+         <!-- .aside -->
+         <aside class="bg-success lter nav-vertical aside-sm" id="nav">
+            {{include _nav}}
+         </aside>
+         <section id="content">
+            <section class="vbox">
+               <!--header class="header bg-light lter b-b">
+                  <ul class="nav nav-pills pull-right">
+                      <li>
+                          <div id="linkedin-logout" style="margin:8px;display:none;">
+                              <a href='javascript:linkedinLogout();' class="btn btn-white"><i class="icon-linkedin-sign"></i>Logout</a>
+                          </div>
+                          <div id="linkedin-signin" style="margin:15px;">
+                              <script type="IN/Login"></script>    
+                          </div>
+                      </li>
+                  </ul>
+                  <p>Refer Friends. Earn Rewards.</p></p>
+                  </header-->
                <section class="bg-light lter">
                   <section class="hbox stretch">
-                     <!-- .aside --> 
                      <aside>
                         <section class="vbox">
                            <section class="scrollable wrapper">
@@ -54,39 +54,16 @@
                                  <article class="timeline-item active">
                                     <div class="timeline-caption">
                                        <div class="panel bg-success lter no-borders">
-                                          <div class="panel-body">
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </article>
-                                 <article class="timeline-item">
-                                    <div class="timeline-caption">
-                                       <div class="panel">
-                                          <div class="panel-body">
-                                             <span class="arrow left"></span> <span class="timeline-icon"><i class="icon-phone time-icon bg-primary"></i></span> <span class="timeline-date">12:25 am</span> 
-                                             <h5> <span>Call to</span> Jason Cokde (021-254-3523) </h5>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </article>
-                                 <article class="timeline-item alt">
-                                    <div class="timeline-caption">
-                                       <div class="panel">
-                                          <div class="panel-body">
-                                             <span class="arrow right"></span> <span class="timeline-icon"><i class="icon-male time-icon bg-success"></i></span> <span class="timeline-date">10:00 am</span> 
-                                             <h5> <span>Appointment</span> Carmark Sook (.inc company) </h5>
-                                             <p>Morbi nec nunc condimentum, egestas dui nec, </p>
-                                          </div>
-                                       </div>
-                                    </div>
-                                 </article>
-                                 <article class="timeline-item">
-                                    <div class="timeline-caption">
-                                       <div class="panel">
-                                          <div class="panel-body">
-                                             <span class="arrow left"></span> <span class="timeline-icon"><i class="icon-plane time-icon bg-dark"></i></span> <span class="timeline-date">8:00 am</span> 
-                                             <h5> <span>Fly to</span> Newyork City </h5>
-                                             <p>82°, Very hot with some sun</p>
+                                          <div class="panel-body text-center">
+                                             <div class="row">
+                                                <div class="col-lg-4">
+                                                   <a class="thumb avatar"><img src="images/acmecorp.gif" alt="" class=""></a>
+                                                </div>
+                                                <div class="col-lg-8 text-center">
+                                                   <small class="text-uc text-xs text-muted">CAMPAIGN FOR</small>
+                                                   <h4>Acme Corp</h4>
+                                                </div>
+                                             </div>
                                           </div>
                                        </div>
                                     </div>
@@ -95,9 +72,24 @@
                                     <div class="timeline-caption">
                                        <div class="panel">
                                           <div class="panel-body">
-                                             <span class="arrow right"></span> <span class="timeline-icon"><i class="icon-file-text time-icon bg-info"></i></span> <span class="timeline-date">9:30 am</span> 
-                                             <h5> <span>Meeting</span> Office A - 2 floor </h5>
-                                             <p>Iaculis lorem justo porttitor orci. Vivamus vestibulum tortor augue. Donec elementum mollis velit.</p>
+                                             <span class="arrow right"></span> 
+                                             <span class="timeline-icon"><i class="icon-briefcase time-icon bg-danger lter"></i></span> 
+                                             <span class="timeline-date">Vacancy Details</span>
+                                             <div class="row">
+                                                <div class="col-lg-3">
+                                                   <div class="sparkline inline" data-type="pie" data-height="50" data-slice-colors="['#99c7ce','#f2f2f2']">60,40</div>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                   <small class="text-uc text-xs text-muted">PROGRESS</small>
+                                                   <h4>60%</h4>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                   <a href="#" class="btn btn-xs btn-info m-t-lg">Preview</a>
+                                                </div>
+                                                <div class="col-lg-3">
+                                                   <a href="#" class="btn btn-xs btn-primary m-t-lg">Edit</a>
+                                                </div>
+                                             </div>
                                           </div>
                                        </div>
                                     </div>
@@ -106,51 +98,195 @@
                                     <div class="timeline-caption">
                                        <div class="panel">
                                           <div class="panel-body">
-                                             <span class="arrow left"></span> <span class="timeline-icon"><i class="icon-code time-icon bg-dark"></i></span> <span class="timeline-date">9:00 am</span> 
-                                             <h5> <span>Work on</span> Web application project </h5>
-                                             <p>Iaculis lorem justo porttitor orci. Donec elementum mollis velit.</p>
+                                             <span class="arrow left"></span> 
+                                             <span class="timeline-icon"><i class="icon-group time-icon bg-primary"></i></span> 
+                                             <span class="timeline-date">Collaborators</span> 
+                                             <div class="row m-b">
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar m-r-lg"><img src="images/avery.jpg" alt="" class=""></a>
+                                                   <small>Avery Adams</small>
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar m-r-lg"><img src="images/rick.jpg" alt="" class=""></a>
+                                                   <small>Rick Staff</small>
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a href="#" class="thumb avatar"><img src="images/plus.jpg" alt="" class=""></a>
+                                                   <small>Add</small>
+                                                </div>
+                                             </div>
                                           </div>
                                        </div>
                                     </div>
                                  </article>
-                                 <div class="timeline-footer"><a href="#"><i class="icon-plus time-icon inline-block bg-dark"></i></a></div>
+                                 <article class="timeline-item alt">
+                                    <div class="timeline-caption">
+                                       <div class="panel">
+                                          <div class="panel-body">
+                                             <span class="arrow right"></span> 
+                                             <span class="timeline-icon"><i class="icon-star time-icon bg-info"></i></span> 
+                                             <span class="timeline-date">Ambassadors</span>
+                                             <div class="row m-b">
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/allen.jpg" alt="" class=""></a>
+                                                   <small>Allen Smith</small>        
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/lisa.jpg" alt="" class=""></a>
+                                                   <small>Lisa Smith</small>
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/linda.jpg" alt="" class=""></a>
+                                                   <small>Linda Black</small>
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/marty.jpg" alt="" class=""></a>
+                                                   <small>Marty West</small>
+                                                </div>
+                                             </div>
+                                             <div class="row">
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/alex.jpg" alt="" class=""></a>
+                                                   <small>Alex Short</small>
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a class="thumb avatar"><img src="images/raye.jpg" alt="" class=""></a>
+                                                   <small>Raye Zu</small> 
+                                                </div>
+                                                <div class="col-lg-3 text-center">
+                                                   <a href="#" class="thumb avatar"><img src="images/plus.jpg" alt="" class=""></a>
+                                                   <small>Add</small> 
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </article>
+                                 <article class="timeline-item">
+                                    <div class="timeline-caption">
+                                       <div class="panel">
+                                          <div class="panel-body">
+                                             <span class="arrow left"></span> 
+                                             <span class="timeline-icon"><i class="icon-gift time-icon bg-warning"></i></span> 
+                                             <span class="timeline-date">Rewards</span>
+                                             <div class="row">
+                                                <div class="col-lg-4 text-center">
+                                                   <a class="thumb-lg"><img src="images/amazon.jpg" alt="" class=""></a>
+                                                   <small>Amazon £5 Voucher</small> 
+                                                </div>
+                                                <div class="col-lg-4 text-center">
+                                                   <a href="#" class="thumb avatar"><img src="images/plus.jpg" alt="" class=""></a>
+                                                   <small>Add</small> 
+                                                </div>
+                                             </div>
+                                          </div>
+                                       </div>
+                                    </div>
+                                 </article>
+                                 <div class="timeline-footer">
+                                    <a href="#"><i class="icon-trophy time-icon inline-block bg-dark"></i></a>
+                                 </div>
+                              </div>
+                              <div class="panel no-borders">
+                                 <div class="panel-body text-center">
+                                    <button class="btn btn-success" id="btn-1" href="#btn-1" data-toggle="class:btn-success"> 
+                                    <i class="icon-bolt text"></i> 
+                                    <span class="text">Launch Campaign</span> 
+                                    <i class="icon-ok text-active"></i> 
+                                    <span class="text-active">Success</span> </button>
+                                 </div>
                               </div>
                            </section>
                         </section>
                      </aside>
                      <!-- /.aside --> <!-- .aside --> 
-                     <aside class="aside-lg bg-light">
-                        <div class="wrapper">
-                           <h4 class="m-t-none">Timeline(36)</h4>
-                           <form>
-                              <div class="form-group"> <label>Name</label> <input type="text" placeholder="Event name" class="input-sm form-control"> </div>
-                              <div class="form-group"> <label>Date</label> <input type="text" placeholder="Event name" class="datepicker input-sm form-control"> </div>
-                              <div class="form-group"> <label>Time</label> <input type="text" placeholder="eg. 3:00 pm" class="input-sm form-control"> </div>
-                              <div class="form-group">
-                                 <label>Type</label> 
-                                 <div>
-                                    <div class="btn-group">
-                                       <button data-toggle="dropdown" class="btn btn-sm btn-white dropdown-toggle"> <span class="dropdown-label">Choose a type</span> <span class="caret"></span> </button> 
-                                       <ul class="dropdown-menu dropdown-select">
-                                          <li><a href="#"><input type="radio" name="d-s-r">Travel</a></li>
-                                          <li class=""><a href="#"><input type="radio" name="d-s-r">Phone</a></li>
-                                          <li class=""><a href="#"><input type="radio" name="d-s-r">Meeting</a></li>
-                                          <li class=""><a href="#"><input type="radio" name="d-s-r">Appointment</a></li>
-                                       </ul>
-                                    </div>
+                     <aside class="col-lg-3 bg-white">
+                        <section class="vbox flex" id="task-detail">
+                           <header class="header bg-light lt b-b m-b">
+                              <p class="m-b"> Add New Collaborator </p>
+                              <div class="lter pull-in b-t m-t-xxs ">
+                                 <div class="wrapper">
+                                    <form>
+                                       <div class="form-group">
+                                          <label>Name</label> 
+                                          <div class="input-group m-t-sm"> 
+                                             <input type="text" class="form-control input-sm" id="task-c-input" placeholder="Joe Blogg"> 
+                                             <span class="input-group-btn"> 
+                                             <button class="btn btn-info btn-sm" type="button" id="task-c-btn"><i class="icon-linkedin"></i></button> </span> 
+                                          </div>
+                                       </div>
+                                       <div class="form-group"> <label>Email</label> <input type="text" placeholder="joe@acmecorp.com" class="input-sm form-control"> </div>
+                                       <div class="row">
+                                          <div class="col-lg-6">
+                                             <div class="form-group">
+                                                <label>Role</label> 
+                                                <div>
+                                                   <div class="btn-group">
+                                                      <button data-toggle="dropdown" class="btn btn-sm btn-white dropdown-toggle"> <span class="dropdown-label">Pick a Role</span> <span class="caret"></span> </button> 
+                                                      <ul class="dropdown-menu dropdown-select">
+                                                         <li><a href="#"><input type="radio" name="d-s-r">Hiring Manager</a></li>
+                                                         <li class=""><a href="#"><input type="radio" name="d-s-r">Colleague</a></li>
+                                                         <li class=""><a href="#"><input type="radio" name="d-s-r">Hiring Team Member</a></li>
+                                                         <li class=""><a href="#"><input type="radio" name="d-s-r">Other</a></li>
+                                                      </ul>
+                                                   </div>
+                                                </div>
+                                             </div>
+                                          </div>
+                                          <div class="col-lg-6">
+                                             <div class="m-t-lg"><button class="btn btn-sm btn-default">Add</button></div>
+                                          </div>
+                                       </div>
+                                    </form>
                                  </div>
                               </div>
-                              <div class="m-t-lg"><button class="btn btn-sm btn-default">Add an event</button></div>
-                           </form>
-                        </div>
+                           </header>
+                           <section>
+                              <section>
+                                 <section>
+                                    <ul id="task-comment" class="list-group no-radius no-border m-t-n-xxs">
+                                       <li class="list-group-item hover">
+                                           <button class="destroy close hover-action">×</button> 
+                                           <article class="chat-item" id="chat-form"> 
+                                                <a class="pull-left thumb-sm avatar"><img src="images/avery.jpg" class="img-circle"></a> 
+                                                <section class="chat-body"> 
+                                                    <small>Hi Avery ! Can you add some ambassadors from the hiring team please?</small> 
+                                                </section> 
+                                            </article>                                       
+                                       </li>
+                                       <li class="list-group-item hover">
+                                           <button class="destroy close hover-action">×</button> 
+                                           <article class="chat-item" id="chat-form"> 
+                                                <a class="pull-left thumb-sm avatar"><img src="images/avery.jpg" class="img-circle"></a> 
+                                                <section class="chat-body"> 
+                                                    <small>Sure. Adding folks now...</small> 
+                                                </section> 
+                                            </article>
+                                       </li>
+                                       <li class="list-group-item hover">
+                                           <button class="destroy close hover-action">×</button> 
+                                           <article class="chat-item" id="chat-form"> 
+                                                <a class="pull-left thumb-sm avatar"><img src="images/mark.jpg" class="img-circle"></a> 
+                                                <section class="chat-body"> 
+                                                    <small>Brilliant! Thanks!</small> 
+                                                </section> 
+                                            </article>
+                                       </li>
+                                    </ul>
+                                 </section>
+                              </section>
+                           </section>
+                           <footer class="footer bg-light lter clearfix b-t">
+                              <div class="input-group m-t-sm"> <input type="text" class="form-control input-sm" id="task-c-input" placeholder="Type a comment"> <span class="input-group-btn"> <button class="btn btn-success btn-sm" type="button" id="task-c-btn"><i class="icon-pencil"></i></button> </span> </div>
+                           </footer>
+                        </section>
                      </aside>
-                     <!-- /.aside --> 
                   </section>
                </section>
-        </section>
-    </section>
-</section>
-<script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
-<script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
-</body>
+            </section>
+         </section>
+      </section>
+      <script src="http://marionettejs.com/downloads/backbone.marionette.min.js"></script>
+      <script src="http://www.parsecdn.com/js/parse-1.2.13.min.js"></script>
+   </body>
 </html>

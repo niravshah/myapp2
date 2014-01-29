@@ -13110,7 +13110,7 @@ body #content {
 }
 .avatar {
     border:1px solid rgba(255,255,255,0.2);
-    display:block;
+    display:inline-block;
     border-radius:500px;
     white-space:nowrap;
 }
